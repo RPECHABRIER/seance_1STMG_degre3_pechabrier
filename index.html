@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fonctions polynômes de degré 3 — 1re STMG</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0d0d14;
+  --bg2: #13131f;
+  --bg3: #1a1a2e;
+  --card: #1e1e30;
+  --card2: #252540;
+  --cyan: #00e5ff;
+  --violet: #9c6bff;
+  --pink: #ff4f91;
+  --green: #00ff94;
+  --amber: #ffb800;
+  --text: #e8e8f0;
+  --muted: #7878a0;
+  --border: rgba(255,255,255,0.08);
+  --glow-c: 0 0 20px rgba(0,229,255,0.3);
+  --glow-v: 0 0 20px rgba(156,107,255,0.3);
+  --glow-p: 0 0 20px rgba(255,79,145,0.3);
+  --glow-g: 0 0 20px rgba(0,255,148,0.3);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── GRID BG ── */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── HEADER ── */
+header{
+  position:relative;
+  z-index:10;
+  padding:40px 24px 32px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(0,229,255,0.04) 0%,transparent 100%);
+}
+.header-tag{
+  display:inline-block;
+  padding:4px 14px;
+  border:1px solid var(--cyan);
+  border-radius:20px;
+  font-size:0.75rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  margin-bottom:16px;
+}
+header h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,5vw,3rem);
+  font-weight:800;
+  line-height:1.1;
+  margin-bottom:8px;
+}
+header h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+header p{font-size:0.95rem;color:var(--muted);}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{
+  max-width:600px;margin:20px auto 0;
+  background:var(--card);border-radius:10px;overflow:hidden;
+  height:8px;border:1px solid var(--border);
+}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  width:0%;
+  transition:width 0.6s cubic-bezier(.4,0,.2,1);
+  border-radius:10px;
+}
+.progress-label{
+  text-align:center;margin-top:8px;
+  font-size:0.78rem;color:var(--muted);
+}
+
+/* ── NAV TABS ── */
+nav{
+  display:flex;gap:4px;padding:16px 24px;
+  overflow-x:auto;position:sticky;top:0;
+  background:rgba(13,13,20,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  z-index:100;
+}
+nav::-webkit-scrollbar{height:3px;}
+nav::-webkit-scrollbar-thumb{background:var(--violet);border-radius:3px;}
+.tab{
+  flex-shrink:0;padding:8px 18px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:0.82rem;font-weight:500;
+  color:var(--muted);cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.tab:hover{border-color:var(--violet);color:var(--text);}
+.tab.active{
+  background:linear-gradient(135deg,rgba(156,107,255,0.2),rgba(0,229,255,0.1));
+  border-color:var(--violet);color:var(--cyan);
+}
+.tab .check{display:none;color:var(--green);margin-right:4px;}
+.tab.done .check{display:inline;}
+
+/* ── MAIN LAYOUT ── */
+main{
+  max-width:900px;margin:0 auto;
+  padding:32px 20px 80px;
+  position:relative;z-index:1;
+}
+.section{display:none;}
+.section.active{
+  display:block;
+  animation:slideIn 0.35s ease forwards;
+}
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── SECTION HEADER ── */
+.sec-header{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:28px;
+}
+.sec-num{
+  width:52px;height:52px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;
+  flex-shrink:0;
+}
+.sec-num.c{background:linear-gradient(135deg,var(--cyan),#0099bb);color:#000;}
+.sec-num.v{background:linear-gradient(135deg,var(--violet),#6640cc);color:#fff;}
+.sec-num.p{background:linear-gradient(135deg,var(--pink),#cc2060);color:#fff;}
+.sec-num.g{background:linear-gradient(135deg,var(--green),#00bb6e);color:#000;}
+.sec-num.a{background:linear-gradient(135deg,var(--amber),#cc8800);color:#000;}
+
+.sec-title h2{
+  font-family:'Syne',sans-serif;
+  font-size:1.4rem;font-weight:700;line-height:1.2;
+}
+.sec-title p{font-size:0.84rem;color:var(--muted);margin-top:3px;}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:18px;
+}
+.card.glow-c{box-shadow:var(--glow-c);border-color:rgba(0,229,255,0.25);}
+.card.glow-v{box-shadow:var(--glow-v);border-color:rgba(156,107,255,0.25);}
+.card.glow-p{box-shadow:var(--glow-p);border-color:rgba(255,79,145,0.25);}
+.card.glow-g{box-shadow:var(--glow-g);border-color:rgba(0,255,148,0.25);}
+
+.card-label{
+  font-size:0.7rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.card-label.c{color:var(--cyan);}
+.card-label.v{color:var(--violet);}
+.card-label.p{color:var(--pink);}
+.card-label.g{color:var(--green);}
+.card-label.a{color:var(--amber);}
+
+.card h3{
+  font-family:'Syne',sans-serif;
+  font-size:1.05rem;font-weight:700;margin-bottom:10px;
+}
+.card p{font-size:0.92rem;line-height:1.75;color:var(--text);}
+.card p+p{margin-top:8px;}
+
+/* ── FORMULA BOX ── */
+.formula{
+  background:var(--bg);
+  border:1px solid rgba(0,229,255,0.2);
+  border-radius:10px;
+  padding:14px 18px;
+  margin:14px 0;
+  font-family:'Outfit',sans-serif;
+  font-size:1.1rem;
+  text-align:center;
+  color:var(--cyan);
+  letter-spacing:0.03em;
+}
+.formula.v{color:var(--violet);border-color:rgba(156,107,255,0.3);}
+.formula.p{color:var(--pink);border-color:rgba(255,79,145,0.3);}
+
+/* ── CANVAS ── */
+.canvas-wrap{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  margin:16px 0;
+  display:flex;justify-content:center;
+}
+canvas{border-radius:8px;display:block;max-width:100%;}
+
+/* ── SLIDER ── */
+.ctrl-row{
+  display:flex;align-items:center;gap:12px;
+  flex-wrap:wrap;margin-top:12px;
+}
+.ctrl-row label{font-size:0.85rem;color:var(--muted);}
+.ctrl-row .val{
+  font-family:'Syne',sans-serif;font-weight:700;
+  min-width:36px;text-align:center;
+}
+input[type=range]{
+  flex:1;min-width:120px;
+  -webkit-appearance:none;
+  height:4px;background:var(--card2);
+  border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--cyan);border:2px solid var(--bg);
+  box-shadow:0 0 8px rgba(0,229,255,0.5);
+  transition:transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet);box-shadow:0 0 8px rgba(156,107,255,0.5);}
+input[type=range].p::-webkit-slider-thumb{background:var(--pink);box-shadow:0 0 8px rgba(255,79,145,0.5);}
+
+/* ── QUIZ ── */
+.quiz-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  margin-bottom:20px;
+}
+.quiz-q{
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+  font-size:0.95rem;line-height:1.6;
+}
+.quiz-q strong{color:var(--amber);}
+.quiz-opts{padding:14px 20px;display:flex;flex-direction:column;gap:8px;}
+.qopt{
+  padding:11px 16px;
+  border:1.5px solid var(--border);
+  border-radius:9px;cursor:pointer;
+  font-size:0.9rem;
+  transition:all 0.18s;
+  display:flex;align-items:center;gap:10px;
+}
+.qopt:hover{border-color:var(--violet);background:rgba(156,107,255,0.08);}
+.qopt.correct{border-color:var(--green)!important;background:rgba(0,255,148,0.1)!important;}
+.qopt.wrong{border-color:var(--pink)!important;background:rgba(255,79,145,0.1)!important;}
+.qopt .letter{
+  width:26px;height:26px;border-radius:6px;
+  background:var(--card2);display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;
+  color:var(--muted);flex-shrink:0;
+}
+.quiz-feedback{
+  display:none;padding:12px 20px;
+  border-top:1px solid var(--border);
+  font-size:0.86rem;line-height:1.6;
+}
+.quiz-feedback.ok{color:var(--green);}
+.quiz-feedback.ko{color:var(--pink);}
+.quiz-feedback::before{font-weight:700;margin-right:6px;}
+.quiz-feedback.ok::before{content:"✓";}
+.quiz-feedback.ko::before{content:"✗";}
+
+/* ── REVEAL BTN ── */
+.btn{
+  padding:10px 22px;border:none;border-radius:9px;
+  font-family:'Outfit',sans-serif;font-size:0.87rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-c{background:linear-gradient(135deg,var(--cyan),#0099bb);color:#000;}
+.btn-v{background:linear-gradient(135deg,var(--violet),#6640cc);color:#fff;}
+.btn-p{background:linear-gradient(135deg,var(--pink),#cc2060);color:#fff;}
+.btn-g{background:linear-gradient(135deg,var(--green),#00bb6e);color:#000;}
+.btn-a{background:linear-gradient(135deg,var(--amber),#cc8800);color:#000;}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1);}
+.btn:active{transform:translateY(0);}
+.btn:disabled{opacity:0.4;cursor:default;transform:none;}
+
+/* ── REVEAL ── */
+.reveal-block{
+  display:none;margin-top:14px;
+  padding:16px;background:var(--bg);
+  border-radius:10px;border:1px solid var(--border);
+  font-size:0.9rem;line-height:1.75;
+}
+
+/* ── GAME ── */
+.game-area{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:14px;padding:20px;
+  margin-bottom:18px;
+}
+.game-area h3{
+  font-family:'Syne',sans-serif;font-weight:700;
+  margin-bottom:14px;color:var(--amber);
+}
+.score-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;background:var(--card2);
+  border-radius:20px;font-family:'Syne',sans-serif;
+  font-weight:700;font-size:0.9rem;color:var(--green);
+  margin-bottom:14px;
+}
+
+.match-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.match-item{
+  padding:12px 14px;
+  background:var(--card2);border:2px solid var(--border);
+  border-radius:10px;cursor:pointer;
+  font-size:0.87rem;text-align:center;
+  transition:all 0.2s;user-select:none;
+}
+.match-item:hover{border-color:var(--violet);}
+.match-item.selected{border-color:var(--cyan);background:rgba(0,229,255,0.08);}
+.match-item.matched{border-color:var(--green);background:rgba(0,255,148,0.1);pointer-events:none;opacity:0.7;}
+.match-item.wrong-flash{border-color:var(--pink);animation:flash 0.4s;}
+@keyframes flash{0%,100%{background:transparent}50%{background:rgba(255,79,145,0.15)}}
+
+/* ── SORT GAME ── */
+.sort-zone{
+  min-height:60px;
+  border:2px dashed var(--border);
+  border-radius:10px;padding:10px;
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:8px;transition:border-color 0.2s;
+}
+.sort-zone.drag-over{border-color:var(--cyan);}
+.sort-item{
+  padding:8px 14px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:8px;cursor:grab;font-size:0.85rem;
+  transition:all 0.2s;user-select:none;
+}
+.sort-item:active{cursor:grabbing;}
+.sort-item.dragging{opacity:0.4;}
+
+/* ── STEP GUIDE ── */
+.steps{display:flex;flex-direction:column;gap:12px;}
+.step{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:14px;background:var(--card2);
+  border-radius:10px;border:1px solid var(--border);
+}
+.step-n{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;
+  flex-shrink:0;margin-top:1px;
+}
+.step-n.c{background:var(--cyan);color:#000;}
+.step-n.v{background:var(--violet);color:#fff;}
+.step-n.p{background:var(--pink);color:#fff;}
+.step-body h4{font-weight:600;font-size:0.92rem;margin-bottom:4px;}
+.step-body p{font-size:0.86rem;color:var(--muted);line-height:1.6;}
+
+/* ── ALERT ── */
+.alert{
+  display:flex;gap:12px;padding:14px 16px;
+  border-radius:10px;margin:14px 0;
+  font-size:0.87rem;line-height:1.6;
+}
+.alert.info{background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.2);}
+.alert.warn{background:rgba(255,184,0,0.07);border:1px solid rgba(255,184,0,0.2);}
+.alert .icon{font-size:1.2rem;flex-shrink:0;}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:540px){.two-col{grid-template-columns:1fr;}}
+
+/* ── NEXT BTN ROW ── */
+.next-row{
+  display:flex;justify-content:flex-end;
+  margin-top:24px;gap:10px;align-items:center;
+}
+.next-row .score-msg{font-size:0.83rem;color:var(--muted);}
+
+/* ── XP TOAST ── */
+.toast{
+  position:fixed;top:80px;right:20px;
+  padding:10px 18px;
+  background:linear-gradient(135deg,var(--green),#00bb6e);
+  color:#000;border-radius:10px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;
+  z-index:9999;opacity:0;
+  transform:translateX(60px);
+  transition:all 0.3s;
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(0);}
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed;width:10px;height:10px;
+  border-radius:2px;z-index:9999;
+  pointer-events:none;
+  animation:fall 1.2s ease-out forwards;
+}
+@keyframes fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
+}
+
+/* ── FINAL ── */
+.final-score{
+  text-align:center;padding:40px 20px;
+}
+.final-score .big{
+  font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.final-score .msg{font-size:1.1rem;color:var(--muted);margin:8px 0 24px;}
+
+/* ── TABLE ── */
+.var-table{width:100%;border-collapse:collapse;font-size:0.88rem;margin:14px 0;}
+.var-table th,.var-table td{
+  padding:10px 14px;border:1px solid var(--border);text-align:center;
+}
+.var-table th{background:var(--card2);font-weight:600;color:var(--muted);}
+.var-table td.hi{color:var(--cyan);font-weight:600;}
+
+/* scroll */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px;}
+</style>
+<style>
+      #france-verif-popup {
+        z-index: 2147483650 !important;
+      }
+      #userlike {
+        z-index: 0;
+        position: fixed;
+      }
+      #honeyContainer {
+          position: fixed;
+          z-index: 100;
+      }
+      #france-verif-popup div:empty {
+        display: block !important;
+        pointer-events: none;
+        height: inherit !important;
+      }
+      #france-verif-popup:focus, #france-verif-popup div:focus{
+        outline: none !important;
+      }
+      .france-verif-modal div:empty {
+        height: inherit !important;
+      }
+      .france-verif-modal:before{
+          content:'';
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          background: rgba(0, 0, 0, 0.4) !important;
+      }
+    </style><style data-styled="active" data-styled-version="5.3.11"></style><style type="text/css">.fsd-overlay{background-color:#e6e7ea!important;width:100vw!important;height:100vh!important;position:fixed!important;top:0!important;left:0!important;font-family:Arial,serif!important;align-items:center!important;z-index:100000000000000000!important;font-size:16px!important}.fsd-overlay,.fsd-wrapper{display:flex!important;justify-content:center!important}.fsd-texts{width:350px!important;color:#000!important}.fsd-image{margin-right:1em!important}.fsd-ignore-fraud{color:#3d8ca1!important;cursor:pointer!important;margin-top:1em!important}.fsd-ignore-fraud:hover{color:#82adb9!important}</style></head>
+<body>
+
+<div class="toast" id="toast">+10 XP 🎯</div>
+
+<header>
+  <div class="header-tag">1re STMG · Chapitre 5</div>
+  <h1><em>Fonctions polynômes</em><br>de degré 3</h1>
+  <p>4 niveaux · Quiz interactifs · Graphiques animés</p>
+  <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+  <div class="progress-label" id="plabel">0 / 4 niveaux complétés — Score : 0 pts</div>
+</header>
+
+<nav>
+  <button class="tab active" onclick="showTab(0,this)"><span class="check">✓</span>I — La fonction cube</button>
+  <button class="tab" onclick="showTab(1,this)"><span class="check">✓</span>II — Forme ax³+b</button>
+  <button class="tab" onclick="showTab(2,this)"><span class="check">✓</span>III — Forme factorisée</button>
+  <button class="tab" onclick="showTab(3,this)"><span class="check">✓</span>⚡ Challenge final</button>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 0 — FONCTION CUBE                 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="s0" class="section active">
+  <div class="sec-header">
+    <div class="sec-num c">I</div>
+    <div class="sec-title">
+      <h2>La fonction cube</h2>
+      <p>Découvrez f(x) = x³ et ses propriétés</p>
+    </div>
+  </div>
+
+  <!-- Définition -->
+  <div class="card glow-c">
+    <div class="card-label c">Définition</div>
+    <h3>La fonction cube</h3>
+    <p>La <strong style="color:var(--cyan)">fonction cube</strong> est la fonction f définie sur ℝ par :</p>
+    <div class="formula">f(x) = x³</div>
+    <p>Elle associe à chaque nombre réel <em>x</em> son cube <em>x³</em>. Par exemple :</p>
+    <table class="var-table">
+      <tbody><tr><th>x</th><td>−2</td><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+      <tr><th>x³</th><td class="hi">−8</td><td class="hi">−1</td><td class="hi">0</td><td class="hi">1</td><td class="hi">8</td><td class="hi">27</td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- Graphique interactif -->
+  <div class="card">
+    <div class="card-label c">Graphique interactif</div>
+    <h3>Courbe de y = x³</h3>
+    <p>Passez la souris sur la courbe pour lire les valeurs !</p>
+    <div class="canvas-wrap">
+      <canvas id="cubeCanvas" width="520" height="320"></canvas>
+    </div>
+    <div id="cubeHint" style="text-align:center;font-size:0.82rem;color:var(--muted);margin-top:4px;">→ Survolez la courbe</div>
+  </div>
+
+  <!-- Propriétés -->
+  <div class="card glow-c">
+    <div class="card-label c">3 propriétés à retenir</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n c">1</div>
+        <div class="step-body">
+          <h4>Symétrie par rapport à l'origine O</h4>
+          <p>Si le repère est orthogonal, la courbe admet <strong>O comme centre de symétrie</strong>. Cela signifie que f(−x) = −f(x).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n c">2</div>
+        <div class="step-body">
+          <h4>Fonction impaire</h4>
+          <p>Pour tout réel x : f(−x) = (−x)³ = −x³ = −f(x). La courbe est symétrique par rapport à O.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n c">3</div>
+        <div class="step-body">
+          <h4>Équation x³ = c → une seule solution</h4>
+          <p>Toute équation x³ = c admet <strong>exactement une solution</strong> : x = ∛c (racine cubique de c).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Résolution -->
+  <div class="card">
+    <div class="card-label a">Méthode — Résoudre x³ = c</div>
+    <h3>Exemples de résolution</h3>
+    <div class="two-col">
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <p style="color:var(--cyan);font-weight:600;margin-bottom:6px;">x³ = 8</p>
+        <p>x = ∛8 = <strong style="color:var(--green)">2</strong></p>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:4px;">Car 2³ = 8 ✓</p>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <p style="color:var(--cyan);font-weight:600;margin-bottom:6px;">x³ = −27</p>
+        <p>x = ∛(−27) = <strong style="color:var(--green)">−3</strong></p>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:4px;">Car (−3)³ = −27 ✓</p>
+      </div>
+    </div>
+    <div class="alert info" style="margin-top:14px;">
+      <span class="icon">💡</span>
+      <span>La racine cubique existe toujours (positive ou négative), contrairement à la racine carrée qui n'existe pas pour les négatifs.</span>
+    </div>
+  </div>
+
+  <!-- QUIZ 1 -->
+  <div class="card-label c" style="margin-bottom:12px;">⚡ Quiz — Niveau I</div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Quelle est la valeur de <strong>(−4)³</strong> ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q0a')"><span class="letter">A</span>64</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q0a')"><span class="letter">B</span>−64</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0a')"><span class="letter">C</span>12</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0a')"><span class="letter">D</span>−12</div>
+    </div>
+    <div class="quiz-feedback ko" id="q0a">(−4)³ = (−4)×(−4)×(−4) = 16×(−4) = −64. Un nombre négatif élevé à une puissance impaire reste négatif !</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Quelle est la solution de l'équation <strong>x³ = 125</strong> ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q0b')"><span class="letter">A</span>x = 25</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0b')"><span class="letter">B</span>x = 41,67</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q0b')"><span class="letter">C</span>x = 5</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0b')"><span class="letter">D</span>x = ±5</div>
+    </div>
+    <div class="quiz-feedback ko" id="q0b">x = ∛125 = 5 car 5³ = 125. Attention : l'équation x³ = c a UNE SEULE solution (pas ±5 comme pour x² = c).</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">La fonction cube est-elle <strong>croissante, décroissante, ou ni l'un ni l'autre</strong> ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'correct','q0c')"><span class="letter">A</span>Croissante sur ℝ</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0c')"><span class="letter">B</span>Décroissante sur ℝ</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0c')"><span class="letter">C</span>Croissante sur [0;+∞) seulement</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q0c')"><span class="letter">D</span>Ni l'un ni l'autre</div>
+    </div>
+    <div class="quiz-feedback ko" id="q0c">La fonction cube est strictement croissante sur tout ℝ : plus x augmente, plus x³ augmente. On peut le voir sur la courbe.</div>
+  </div>
+
+  <div class="next-row">
+    <span class="score-msg" id="score0msg"></span>
+    <button class="btn btn-c" onclick="nextTab(1)">Niveau suivant →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 1 — AX³ + B                       -->
+<!-- ══════════════════════════════════════════ -->
+<section id="s1" class="section">
+  <div class="sec-header">
+    <div class="sec-num v">II</div>
+    <div class="sec-title">
+      <h2>Fonctions de la forme ax³ + b</h2>
+      <p>Explorez l'effet des paramètres a et b</p>
+    </div>
+  </div>
+
+  <div class="card glow-v">
+    <div class="card-label v">Définition</div>
+    <h3>Fonctions ax³ + b</h3>
+    <p>Ces fonctions sont de la forme :</p>
+    <div class="formula v">f(x) = ax³ + b</div>
+    <p>où <strong style="color:var(--violet)">a ≠ 0</strong> est un réel (coefficient directeur) et <strong style="color:var(--violet)">b</strong> est un réel (ordonnée à l'origine).</p>
+  </div>
+
+  <!-- Graphique dynamique ax3+b -->
+  <div class="card">
+    <div class="card-label v">Labo interactif 🔬</div>
+    <h3>Modifiez a et b — observez la courbe</h3>
+    <div class="canvas-wrap">
+      <canvas id="axbCanvas" width="520" height="300"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <label>a =</label>
+      <span class="val" id="aVal" style="color:var(--violet)">1</span>
+      <input type="range" class="v" id="aSlide" min="-3" max="3" step="0.5" value="1" oninput="updateAxb()">
+      <label>b =</label>
+      <span class="val" id="bVal" style="color:var(--cyan)">0</span>
+      <input type="range" id="bSlide" min="-4" max="4" step="0.5" value="0" oninput="updateAxb()">
+    </div>
+    <div id="axbInfo" style="margin-top:10px;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:0.85rem;"><strong style="color:#9c6bff">f(x) = 1x³ + 0</strong> &nbsp;|&nbsp; 
+    Fonction <strong><span style="color:var(--green)">croissante</span></strong> sur ℝ &nbsp;|&nbsp; 
+    f(0) = <strong style="color:var(--amber)">0</strong></div>
+  </div>
+
+  <!-- Propriétés -->
+  <div class="card glow-v">
+    <div class="card-label v">2 propriétés essentielles</div>
+    <div class="two-col">
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid rgba(156,107,255,0.2);">
+        <p style="color:var(--violet);font-weight:700;font-size:1rem;margin-bottom:8px;">Si a &gt; 0</p>
+        <p style="font-size:0.87rem;line-height:1.6;">La courbe est en forme de ∫. La fonction est <strong style="color:var(--green)">croissante</strong> sur ℝ.</p>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:6px;">f(−∞) = −∞ et f(+∞) = +∞</p>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid rgba(255,79,145,0.2);">
+        <p style="color:var(--pink);font-weight:700;font-size:1rem;margin-bottom:8px;">Si a &lt; 0</p>
+        <p style="font-size:0.87rem;line-height:1.6;">La courbe est en forme de ∫ retournée. La fonction est <strong style="color:var(--pink)">décroissante</strong> sur ℝ.</p>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:6px;">f(−∞) = +∞ et f(+∞) = −∞</p>
+      </div>
+    </div>
+    <div class="alert warn" style="margin-top:14px;">
+      <span class="icon">⚠️</span>
+      <span>Le paramètre <strong>b</strong> translate la courbe vers le haut (b &gt; 0) ou vers le bas (b &lt; 0). Le point (0 ; b) est toujours sur la courbe.</span>
+    </div>
+  </div>
+
+  <!-- Tableau de variations -->
+  <div class="card">
+    <div class="card-label v">Tableau de variations</div>
+    <h3>Comment lire le sens de variation</h3>
+    <table class="var-table">
+      <tbody><tr><th>x</th><td>−∞</td><td colspan="2"></td><td>+∞</td></tr>
+      <tr><th style="color:var(--green)">a &gt; 0</th><td style="color:var(--muted)">−∞</td><td colspan="2">↗</td><td style="color:var(--text)">+∞</td></tr>
+      <tr><th style="color:var(--pink)">a &lt; 0</th><td style="color:var(--text)">+∞</td><td colspan="2">↘</td><td style="color:var(--muted)">−∞</td></tr>
+    </tbody></table>
+    <p style="font-size:0.87rem;margin-top:10px;color:var(--muted)">Dans les deux cas, f(0) = b — c'est l'ordonnée à l'origine.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card-label v" style="margin-bottom:12px;">⚡ Quiz — Niveau II</div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Pour f(x) = <strong>−2x³ + 5</strong>, quelle est la valeur de f(0) ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q1a')"><span class="letter">A</span>−2</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q1a')"><span class="letter">B</span>5</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1a')"><span class="letter">C</span>3</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1a')"><span class="letter">D</span>0</div>
+    </div>
+    <div class="quiz-feedback ko" id="q1a">f(0) = −2×0³ + 5 = 0 + 5 = 5. Le paramètre b donne toujours la valeur en x = 0.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">La fonction g(x) = <strong>−3x³ + 1</strong> est-elle croissante ou décroissante ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q1b')"><span class="letter">A</span>Croissante sur ℝ</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q1b')"><span class="letter">B</span>Décroissante sur ℝ</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1b')"><span class="letter">C</span>Croissante puis décroissante</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1b')"><span class="letter">D</span>On ne peut pas savoir</div>
+    </div>
+    <div class="quiz-feedback ko" id="q1b">a = −3 &lt; 0 → la fonction est décroissante sur ℝ. Le paramètre b = 1 ne change pas le sens de variation.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Quelle est la courbe représentant <strong>f(x) = 2x³ + 3</strong> par rapport à celle de y = 2x³ ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q1c')"><span class="letter">A</span>Elle est plus pentue</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1c')"><span class="letter">B</span>Elle est symétrique par rapport à O</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q1c')"><span class="letter">C</span>Elle est décalée de 3 unités vers le haut</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q1c')"><span class="letter">D</span>Elle est décalée de 3 unités vers la droite</div>
+    </div>
+    <div class="quiz-feedback ko" id="q1c">Ajouter b = 3 translate verticalement la courbe de 3 unités vers le haut. La forme reste identique.</div>
+  </div>
+
+  <!-- JEU — associer allure et signe -->
+  <div class="game-area">
+    <h3>🎮 Mini-jeu — Associez la courbe et le signe de a</h3>
+    <div class="score-badge" id="matchScore1">Score : 0 / 4</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;">Cliquez sur une fonction à gauche, puis sur son sens de variation à droite.</p>
+    <div class="match-grid" id="matchGrid1">
+      <div class="match-item" data-id="f1" data-group="func" onclick="doMatch(this,'mg1')">f(x) = 3x³ + 1</div>
+      <div class="match-item" data-id="m-croissante" data-group="sign" onclick="doMatch(this,'mg1')">↗ Croissante sur ℝ</div>
+      <div class="match-item" data-id="f2" data-group="func" onclick="doMatch(this,'mg1')">g(x) = −x³ + 2</div>
+      <div class="match-item" data-id="m-decroissante" data-group="sign" onclick="doMatch(this,'mg1')">↘ Décroissante sur ℝ</div>
+      <div class="match-item" data-id="f3" data-group="func" onclick="doMatch(this,'mg1')">h(x) = 0,5x³ − 4</div>
+      <div class="match-item" data-id="f4" data-group="func" onclick="doMatch(this,'mg1')">k(x) = −2x³</div>
+    </div>
+    <div id="matchFeedback1" style="margin-top:10px;font-size:0.85rem;"></div>
+  </div>
+
+  <div class="next-row">
+    <button class="btn btn-v" onclick="nextTab(2)">Niveau suivant →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 2 — FORME FACTORISÉE              -->
+<!-- ══════════════════════════════════════════ -->
+<section id="s2" class="section">
+  <div class="sec-header">
+    <div class="sec-num p">III</div>
+    <div class="sec-title">
+      <h2>Forme a(x−x₁)(x−x₂)(x−x₃)</h2>
+      <p>Racines et allure de la courbe</p>
+    </div>
+  </div>
+
+  <div class="card glow-p">
+    <div class="card-label p">Définition fondamentale</div>
+    <h3>Polynôme de degré 3 factorisé</h3>
+    <p>Toute fonction de la forme :</p>
+    <div class="formula p">f(x) = a(x − x₁)(x − x₂)(x − x₃)</div>
+    <p>avec <strong style="color:var(--pink)">a ≠ 0</strong>, est un polynôme de degré 3.</p>
+    <p style="margin-top:8px;">Les valeurs x₁, x₂ et x₃ sont les <strong style="color:var(--pink)">racines</strong> du polynôme : ce sont les abscisses où la courbe <strong>coupe l'axe des abscisses</strong>.</p>
+    <div class="alert info" style="margin-top:12px;">
+      <span class="icon">🎯</span>
+      <span>Si x₁ ≠ x₂ ≠ x₃, la courbe coupe l'axe Ox en <strong>3 points distincts</strong> d'abscisses x₁, x₂, x₃.</span>
+    </div>
+  </div>
+
+  <!-- Graphique factorisé interactif -->
+  <div class="card">
+    <div class="card-label p">Labo interactif 🔬</div>
+    <h3>Déplacez les racines et le signe de a</h3>
+    <div class="canvas-wrap">
+      <canvas id="factCanvas" width="520" height="320"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <label>x₁ =</label>
+      <span class="val" id="x1Val" style="color:var(--pink)">-2</span>
+      <input type="range" class="p" id="x1Slide" min="-4" max="0" step="0.5" value="-2" oninput="updateFact()">
+    </div>
+    <div class="ctrl-row">
+      <label>x₂ =</label>
+      <span class="val" id="x2Val" style="color:var(--cyan)">0</span>
+      <input type="range" id="x2Slide" min="-2" max="2" step="0.5" value="0" oninput="updateFact()">
+    </div>
+    <div class="ctrl-row">
+      <label>x₃ =</label>
+      <span class="val" id="x3Val" style="color:var(--violet)">2</span>
+      <input type="range" class="v" id="x3Slide" min="0" max="4" step="0.5" value="2" oninput="updateFact()">
+      <label>a =</label>
+      <select id="aSign" onchange="updateFact()" style="background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:'Outfit',sans-serif;">
+        <option value="1" selected="selected">a &gt; 0</option>
+        <option value="-1">a &lt; 0</option>
+      </select>
+    </div>
+    <div id="factInfo" style="margin-top:10px;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:0.85rem;">f(x) = <strong style="color:#00e5ff">(x+2)(x−0)(x−2)</strong> &nbsp;|&nbsp; 
+    Racines : <strong>-2, 0, 2</strong> &nbsp;|&nbsp; 
+    f(0) ≈ <strong style="color:var(--amber)">0.0</strong> &nbsp;|&nbsp;
+    a &gt; 0 ✓</div>
+  </div>
+
+  <!-- Allures -->
+  <div class="card glow-p">
+    <div class="card-label p">Les 2 allures possibles</div>
+    <div class="two-col">
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid rgba(0,229,255,0.2);">
+        <p style="color:var(--cyan);font-weight:700;margin-bottom:8px;">a &gt; 0</p>
+        <p style="font-size:0.85rem;line-height:1.6;">La courbe <strong>monte de gauche à droite</strong> en passant par les 3 racines.<br>Avant x₁ : courbe en bas. Après x₃ : courbe en haut.</p>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid rgba(255,79,145,0.2);">
+        <p style="color:var(--pink);font-weight:700;margin-bottom:8px;">a &lt; 0</p>
+        <p style="font-size:0.85rem;line-height:1.6;">La courbe <strong>descend de gauche à droite</strong> en passant par les 3 racines.<br>Avant x₁ : courbe en haut. Après x₃ : courbe en bas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Méthode -->
+  <div class="card">
+    <div class="card-label a">Méthode — Lire les racines</div>
+    <h3>Exemple : f(x) = 2(x+1)(x−2)(x−4)</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n p">1</div>
+        <div class="step-body">
+          <h4>Identifier a et les racines</h4>
+          <p>a = 2 &gt; 0. Les racines sont : x₁ = −1, x₂ = 2, x₃ = 4<br>(on résout x+1=0, x−2=0, x−4=0)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n p">2</div>
+        <div class="step-body">
+          <h4>Déduire l'allure</h4>
+          <p>a &gt; 0 → courbe qui monte. La courbe coupe l'axe des x en (−1;0), (2;0) et (4;0).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n p">3</div>
+        <div class="step-body">
+          <h4>Vérifier avec f(0)</h4>
+          <p>f(0) = 2×(0+1)×(0−2)×(0−4) = 2×1×(−2)×(−4) = <strong>16</strong>. Le point (0;16) est sur la courbe.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card-label p" style="margin-bottom:12px;">⚡ Quiz — Niveau III</div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Quelles sont les racines de <strong>f(x) = 3(x−1)(x+2)(x−5)</strong> ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q2a')"><span class="letter">A</span>x = 3, x = 2, x = 5</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q2a')"><span class="letter">B</span>x = 1, x = −2, x = 5</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2a')"><span class="letter">C</span>x = −1, x = 2, x = −5</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2a')"><span class="letter">D</span>x = 1, x = 2, x = 5</div>
+    </div>
+    <div class="quiz-feedback ko" id="q2a">On résout chaque facteur = 0 : x−1=0 → x=1 ; x+2=0 → x=−2 ; x−5=0 → x=5. Attention au signe !</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">La courbe de <strong>f(x) = −(x+3)(x−1)(x−2)</strong> : avant x = −3, elle est…</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'correct','q2b')"><span class="letter">A</span>Au-dessus de l'axe des x (f &gt; 0)</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2b')"><span class="letter">B</span>En dessous de l'axe des x (f &lt; 0)</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2b')"><span class="letter">C</span>On ne peut pas savoir</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2b')"><span class="letter">D</span>Elle passe par l'origine</div>
+    </div>
+    <div class="quiz-feedback ko" id="q2b">a = −1 &lt; 0 → avant la plus
+ petite racine (x = −3), la courbe est en haut (au-dessus de l'axe). 
+C'est l'allure de la courbe avec a &lt; 0.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Combien de fois la courbe de <strong>f(x) = (x−2)(x+1)(x−7)</strong> coupe-t-elle l'axe des abscisses ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','q2c')"><span class="letter">A</span>1 fois</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2c')"><span class="letter">B</span>2 fois</div>
+      <div class="qopt" onclick="ansQ(this,'correct','q2c')"><span class="letter">C</span>3 fois</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','q2c')"><span class="letter">D</span>0 fois</div>
+    </div>
+    <div class="quiz-feedback ko" id="q2c">Il y a 3 facteurs distincts, donc 3 racines distinctes : x = 2, x = −1, x = 7. La courbe coupe l'axe Ox exactement 3 fois.</div>
+  </div>
+
+  <div class="next-row">
+    <button class="btn btn-p" onclick="nextTab(3)">⚡ Challenge final →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 3 — CHALLENGE FINAL               -->
+<!-- ══════════════════════════════════════════ -->
+<section id="s3" class="section">
+  <div class="sec-header">
+    <div class="sec-num a">⚡</div>
+    <div class="sec-title">
+      <h2>Challenge final</h2>
+      <p>Testez toutes vos connaissances</p>
+    </div>
+  </div>
+
+  <div class="game-area">
+    <h3>🧩 Jeu — Associez fonction et description</h3>
+    <div class="score-badge" id="matchScore2">Score : 0 / 6</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;">Cliquez sur une fonction (colonne gauche), puis sur sa description (colonne droite).</p>
+    <div class="match-grid" id="matchGrid2" style="grid-template-columns:1fr 1fr;">
+      <div class="match-item" data-id="cf1" data-group="cfunc" onclick="doMatch(this,'mg2')">f(x) = x³</div>
+      <div class="match-item" data-id="cd-impaire" data-group="cdesc" onclick="doMatch(this,'mg2')">Fonction impaire, symétrie en O</div>
+      <div class="match-item" data-id="cf2" data-group="cfunc" onclick="doMatch(this,'mg2')">g(x) = −3x³ + 7</div>
+      <div class="match-item" data-id="cd-dec" data-group="cdesc" onclick="doMatch(this,'mg2')">Décroissante, passe par (0;7)</div>
+      <div class="match-item" data-id="cf3" data-group="cfunc" onclick="doMatch(this,'mg2')">h(x) = (x+2)(x−1)(x−3)</div>
+      <div class="match-item" data-id="cd-3rac" data-group="cdesc" onclick="doMatch(this,'mg2')">3 racines : −2, 1, 3 — a&gt;0</div>
+      <div class="match-item" data-id="cf4" data-group="cfunc" onclick="doMatch(this,'mg2')">k(x) = −2(x+1)(x−4)(x−6)</div>
+      <div class="match-item" data-id="cd-neg" data-group="cdesc" onclick="doMatch(this,'mg2')">3 racines : −1, 4, 6 — a&lt;0</div>
+      <div class="match-item" data-id="cf5" data-group="cfunc" onclick="doMatch(this,'mg2')">p(x) = 4x³ − 2</div>
+      <div class="match-item" data-id="cd-crois" data-group="cdesc" onclick="doMatch(this,'mg2')">Croissante, passe par (0;−2)</div>
+      <div class="match-item" data-id="cf6" data-group="cfunc" onclick="doMatch(this,'mg2')">q(x) = x³ − 8</div>
+      <div class="match-item" data-id="cd-sol2" data-group="cdesc" onclick="doMatch(this,'mg2')">x³ = 8 → solution x = 2</div>
+    </div>
+    <div id="matchFeedback2" style="margin-top:10px;font-size:0.85rem;"></div>
+  </div>
+
+  <!-- QCM final -->
+  <div class="card-label a" style="margin-bottom:12px;">⚡ QCM — Questions mixtes</div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">f(x) = <strong>a(x−1)(x−3)(x−5)</strong> et f(2) &lt; 0. Quel est le signe de a ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','qfa')"><span class="letter">A</span>a &gt; 0</div>
+      <div class="qopt" onclick="ansQ(this,'correct','qfa')"><span class="letter">B</span>a &lt; 0</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfa')"><span class="letter">C</span>a = 0</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfa')"><span class="letter">D</span>Impossible de savoir</div>
+    </div>
+    <div class="quiz-feedback ko" id="qfa">f(2) = a×(2−1)(2−3)(2−5) = a×1×(−1)×(−3) = 3a. Si f(2) &lt; 0 alors 3a &lt; 0 donc a &lt; 0.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">La solution de <strong>2x³ − 54 = 0</strong> est :</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','qfb')"><span class="letter">A</span>x = 3√3</div>
+      <div class="qopt" onclick="ansQ(this,'correct','qfb')"><span class="letter">B</span>x = 3</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfb')"><span class="letter">C</span>x = 27</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfb')"><span class="letter">D</span>x = ±3</div>
+    </div>
+    <div class="quiz-feedback ko" id="qfb">2x³ = 54 → x³ = 27 → x = ∛27 = 3 (car 3³ = 27). Rappel : x³ = c a une seule solution !</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">f(x) = <strong>−(x+3)(x−2)(x−6)</strong>. Laquelle de ces affirmations est FAUSSE ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','qfc')"><span class="letter">A</span>f(−3) = 0</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfc')"><span class="letter">B</span>f(2) = 0</div>
+      <div class="qopt" onclick="ansQ(this,'correct','qfc')"><span class="letter">C</span>La courbe est croissante sur ℝ</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfc')"><span class="letter">D</span>f(0) = −(3)(−2)(−6) = −36</div>
+    </div>
+    <div class="quiz-feedback ko" id="qfc">a = −1 &lt; 0 → la fonction 
+est décroissante (pas croissante). Les trois autres affirmations sont 
+vraies. Vérif f(0) : −(0+3)(0−2)(0−6) = −(3)(−2)(−6) = −36 ✓</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Quelle fonction possède le point (0 ; −4) sur sa courbe ?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="ansQ(this,'wrong','qfd')"><span class="letter">A</span>f(x) = x³ + 4</div>
+      <div class="qopt" onclick="ansQ(this,'correct','qfd')"><span class="letter">B</span>g(x) = 3x³ − 4</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfd')"><span class="letter">C</span>h(x) = −x³</div>
+      <div class="qopt" onclick="ansQ(this,'wrong','qfd')"><span class="letter">D</span>k(x) = 2x³ + 4</div>
+    </div>
+    <div class="quiz-feedback ko" id="qfd">On calcule f(0) pour chaque fonction : g(0) = 3×0³ − 4 = −4 ✓. Pour les autres : f(0)=4, h(0)=0, k(0)=4.</div>
+  </div>
+
+  <!-- Score final -->
+  <div class="final-score" id="finalZone" style="display:none;">
+    <div class="big" id="finalBig">0</div>
+    <div class="msg" id="finalMsg"></div>
+    <button class="btn btn-c" onclick="restartAll()" style="margin:0 auto;display:block;">🔄 Recommencer</button>
+  </div>
+
+  <div class="next-row" id="showFinalBtn">
+    <button class="btn btn-a" onclick="showFinal()">🏆 Voir mon score final</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────── */
+let totalScore = 0;
+let sectionsDone = [false,false,false,false];
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('.section');
+let answeredQ = {};
+
+/* ────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────── */
+function showTab(idx, btn){
+  sections.forEach(s=>s.classList.remove('active'));
+  tabs.forEach(t=>t.classList.remove('active'));
+  document.getElementById('s'+idx).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextTab(idx){
+  sectionsDone[idx-1]=true;
+  tabs[idx-1].classList.add('done');
+  updateProgress();
+  showTab(idx, tabs[idx]);
+}
+
+function updateProgress(){
+  const done = sectionsDone.filter(Boolean).length;
+  document.getElementById('pbar').style.width=(done/4*100)+'%';
+  document.getElementById('plabel').textContent=done+' / 4 niveaux complétés — Score : '+totalScore+' pts';
+}
+
+/* ────────────────────────────────────────────
+   QUIZ
+──────────────────────────────────────────── */
+function ansQ(el, result, fbId){
+  if(answeredQ[fbId]) return;
+  answeredQ[fbId]=true;
+  const opts = el.closest('.quiz-opts').querySelectorAll('.qopt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+  const fb = document.getElementById(fbId);
+  if(result==='correct'){
+    el.classList.add('correct');
+    fb.className='quiz-feedback ok';
+    addScore(10);
+    showToast('+10 XP 🎯');
+    confetti();
+  } else {
+    el.classList.add('wrong');
+    fb.className='quiz-feedback ko';
+  }
+  fb.style.display='block';
+}
+
+/* ────────────────────────────────────────────
+   SCORE / TOAST / CONFETTI
+──────────────────────────────────────────── */
+function addScore(n){
+  totalScore+=n;
+  updateProgress();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function confetti(){
+  const colors=[getComputedStyle(document.documentElement).getPropertyValue('--cyan'),
+    getComputedStyle(document.documentElement).getPropertyValue('--violet'),
+    getComputedStyle(document.documentElement).getPropertyValue('--green'),
+    getComputedStyle(document.documentElement).getPropertyValue('--pink')];
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:${Math.random()*30}vh;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-delay:${Math.random()*0.5}s;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      transform:rotate(${Math.random()*360}deg);`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+/* ────────────────────────────────────────────
+   CANVAS — FONCTION CUBE
+──────────────────────────────────────────── */
+function initCubeCanvas(){
+  const cv=document.getElementById('cubeCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  const cx=W/2, cy=H/2, sc=30;
+
+  function draw(hx){
+    ctx.clearRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+    for(let x=cx%sc;x<W;x+=sc){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=cy%sc;y<H;y+=sc){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Axes
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    // Tickmarks
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='10px Outfit';ctx.textAlign='center';
+    for(let i=-7;i<=7;i++){
+      if(i===0) continue;
+      ctx.fillText(i,cx+i*sc,cy+14);
+      ctx.fillText(i,cx+4,cy-i*sc+3);
+    }
+    // Curve
+    const grad=ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'#9c6bff');grad.addColorStop(0.5,'#00e5ff');grad.addColorStop(1,'#9c6bff');
+    ctx.strokeStyle=grad;ctx.lineWidth=3;ctx.lineJoin='round';
+    ctx.beginPath();
+    for(let px=0;px<W;px++){
+      const xv=(px-cx)/sc;
+      const yv=xv*xv*xv;
+      const py=cy-yv*sc;
+      px===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // Hover point
+    if(hx!==undefined){
+      const xv=(hx-cx)/sc;
+      const yv=xv*xv*xv;
+      const py=cy-yv*sc;
+      if(py>0&&py<H){
+        ctx.fillStyle='#00e5ff';
+        ctx.beginPath();ctx.arc(hx,py,6,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(hx+10,py-22,120,22);
+        ctx.fillStyle='#00e5ff';ctx.textAlign='left';ctx.font='bold 11px Outfit';
+        ctx.fillText(`x=${xv.toFixed(2)}  y=${yv.toFixed(2)}`,hx+14,py-7);
+      }
+    }
+  }
+  draw();
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(e.clientX-r.left)*(W/r.width);
+    draw(mx);
+    document.getElementById('cubeHint').textContent='x = '+((mx-cx)/sc).toFixed(2)+'  →  x³ = '+(((mx-cx)/sc)**3).toFixed(2);
+  });
+  cv.addEventListener('mouseleave',()=>{draw();document.getElementById('cubeHint').textContent='→ Survolez la courbe';});
+}
+
+/* ────────────────────────────────────────────
+   CANVAS — AX³ + B
+──────────────────────────────────────────── */
+function drawAxb(){
+  const cv=document.getElementById('axbCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const cx=W/2,cy=H/2,sc=28;
+  const a=parseFloat(document.getElementById('aSlide').value);
+  const b=parseFloat(document.getElementById('bSlide').value);
+  document.getElementById('aVal').textContent=a;
+  document.getElementById('bVal').textContent=b;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let x=cx%sc;x<W;x+=sc){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=cy%sc;y<H;y+=sc){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // Reference curve (dashed)
+  ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let px=0;px<W;px++){const xv=(px-cx)/sc;ctx.lineTo!==undefined&&(px===0?ctx.moveTo(px,cy-xv*xv*xv*sc):ctx.lineTo(px,cy-xv*xv*xv*sc));}
+  ctx.stroke();ctx.setLineDash([]);
+
+  // Main curve
+  const col=a>0?'#9c6bff':'#ff4f91';
+  ctx.strokeStyle=col;ctx.lineWidth=3;
+  ctx.beginPath();
+  for(let px=0;px<W;px++){
+    const xv=(px-cx)/sc;
+    const yv=a*xv*xv*xv+b;
+    const py=cy-yv*sc;
+    px===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+
+  // b point
+  const bpy=cy-b*sc;
+  ctx.fillStyle='#ffb800';ctx.beginPath();ctx.arc(cx,bpy,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#ffb800';ctx.font='bold 11px Outfit';ctx.textAlign='left';
+  ctx.fillText('(0;'+b+')',cx+10,bpy-6);
+
+  // Info
+  const info=document.getElementById('axbInfo');
+  info.innerHTML=`<strong style="color:${col}">f(x) = ${a}x³ ${b>=0?'+':''} ${b}</strong> &nbsp;|&nbsp; 
+    Fonction <strong>${a>0?'<span style=color:var(--green)>croissante</span>':'<span style=color:var(--pink)>décroissante</span>'}</strong> sur ℝ &nbsp;|&nbsp; 
+    f(0) = <strong style="color:var(--amber)">${b}</strong>`;
+}
+
+function updateAxb(){drawAxb();}
+
+/* ────────────────────────────────────────────
+   CANVAS — FACTORISÉ
+──────────────────────────────────────────── */
+function drawFact(){
+  const cv=document.getElementById('factCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const cx=W/2,cy=H/2,sc=40;
+  const x1=parseFloat(document.getElementById('x1Slide').value);
+  const x2=parseFloat(document.getElementById('x2Slide').value);
+  const x3=parseFloat(document.getElementById('x3Slide').value);
+  const a=parseFloat(document.getElementById('aSign').value);
+  document.getElementById('x1Val').textContent=x1;
+  document.getElementById('x2Val').textContent=x2;
+  document.getElementById('x3Val').textContent=x3;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let x=cx%sc;x<W;x+=sc){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=cy%sc;y<H;y+=sc){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  const col=a>0?'#00e5ff':'#ff4f91';
+  ctx.strokeStyle=col;ctx.lineWidth=3;
+  ctx.beginPath();
+  for(let px=0;px<W;px++){
+    const xv=(px-cx)/sc;
+    const yv=a*(xv-x1)*(xv-x2)*(xv-x3)*0.5;
+    const py=cy-yv*sc;
+    if(py<-H||py>2*H){ctx.moveTo(px,py);continue;}
+    px===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+
+  // Root markers
+  [[x1,'#ff4f91'],[x2,'#00e5ff'],[x3,'#9c6bff']].forEach(([r,c])=>{
+    const px=cx+r*sc;
+    ctx.fillStyle=c;ctx.beginPath();ctx.arc(px,cy,7,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 10px Outfit';ctx.textAlign='center';
+    ctx.fillText(r,px,cy-12);
+  });
+
+  const f0=a*(0-x1)*(0-x2)*(0-x3)*0.5;
+  const info=document.getElementById('factInfo');
+  info.innerHTML=`f(x) = <strong style="color:${col}">${a>0?'':'−'}(x${x1>=0?'−':'+'}${Math.abs(x1)})(x${x2>=0?'−':'+'}${Math.abs(x2)})(x${x3>=0?'−':'+'}${Math.abs(x3)})</strong> &nbsp;|&nbsp; 
+    Racines : <strong>${x1}, ${x2}, ${x3}</strong> &nbsp;|&nbsp; 
+    f(0) ≈ <strong style="color:var(--amber)">${f0.toFixed(1)}</strong> &nbsp;|&nbsp;
+    a ${a>0?'> 0 ✓':'< 0 ✓'}`;
+}
+
+function updateFact(){drawFact();}
+
+/* ────────────────────────────────────────────
+   MATCHING GAME
+──────────────────────────────────────────── */
+const matchPairs = {
+  mg1:{
+    'f1':'m-croissante',   // 3x³+1 → croissante (a>0)
+    'f2':'m-decroissante', // −x³+2 → décroissante (a<0)
+    'f3':'m-croissante',   // 0.5x³−4 → croissante (a>0)
+    'f4':'m-decroissante'  // −2x³ → décroissante (a<0)
+  },
+  mg2:{
+    'cf1':'cd-impaire',
+    'cf2':'cd-dec',
+    'cf3':'cd-3rac',
+    'cf4':'cd-neg',
+    'cf5':'cd-crois',
+    'cf6':'cd-sol2'
+  }
+};
+const matchState = {mg1:{sel:null,matched:0,total:4},mg2:{sel:null,matched:0,total:6}};
+
+function doMatch(el, gameId){
+  if(el.classList.contains('matched')) return;
+  const state=matchState[gameId];
+  const group=el.dataset.group;
+  const id=el.dataset.id;
+
+  if(!state.sel){
+    // First click — must be from "func" group
+    if(group.includes('func')){
+      document.querySelectorAll(`#matchGrid${gameId.slice(-1)} .match-item`).forEach(i=>i.classList.remove('selected'));
+      el.classList.add('selected');
+      state.sel=el;
+    }
+    return;
+  }
+
+  // Second click — must be from "sign/desc" group
+  if(group===state.sel.dataset.group){
+    // Same group re-select
+    document.querySelectorAll(`#matchGrid${gameId.slice(-1)} .match-item`).forEach(i=>i.classList.remove('selected'));
+    el.classList.add('selected');
+    state.sel=el;
+    return;
+  }
+
+  const pairs=matchPairs[gameId];
+  const selId=state.sel.dataset.id;
+  let correct=false;
+
+  // Check if sel→id or id→sel is a correct pair
+  if(pairs[selId]===id || pairs[id]===selId){
+    correct=true;
+  }
+
+  if(correct){
+    state.sel.classList.remove('selected');
+    state.sel.classList.add('matched');
+    el.classList.add('matched');
+    state.matched++;
+    addScore(15);
+    showToast('+15 XP 🎯');
+    if(state.matched===1) confetti();
+    const scoreEl=document.getElementById('matchScore'+gameId.slice(-1));
+    scoreEl.textContent='Score : '+state.matched+' / '+state.total;
+    if(state.matched===state.total){
+      document.getElementById('matchFeedback'+gameId.slice(-1)).innerHTML='<span style="color:var(--green);font-weight:700;">🏆 Parfait ! Toutes les associations sont correctes !</span>';
+      confetti();confetti();
+    }
+  } else {
+    state.sel.classList.add('wrong-flash');
+    el.classList.add('wrong-flash');
+    setTimeout(()=>{
+      state.sel.classList.remove('wrong-flash','selected');
+      el.classList.remove('wrong-flash');
+    },500);
+  }
+  state.sel=null;
+}
+
+/* ────────────────────────────────────────────
+   FINAL SCORE
+──────────────────────────────────────────── */
+function showFinal(){
+  document.getElementById('showFinalBtn').style.display='none';
+  const z=document.getElementById('finalZone');
+  z.style.display='block';
+  const big=document.getElementById('finalBig');
+  const msg=document.getElementById('finalMsg');
+  big.textContent=totalScore+' pts';
+  if(totalScore>=150) msg.textContent='🏆 Excellent ! Tu maîtrises les polynômes de degré 3 !';
+  else if(totalScore>=80) msg.textContent='💪 Bien joué ! Revois quelques notions et tu y es !';
+  else msg.textContent='📚 Continue à t\'entraîner, tu vas y arriver !';
+  confetti();confetti();confetti();
+  sectionsDone[3]=true;
+  tabs[3].classList.add('done');
+  updateProgress();
+}
+
+function restartAll(){
+  totalScore=0;
+  sectionsDone=[false,false,false,false];
+  answeredQ={};
+  Object.keys(matchState).forEach(k=>{matchState[k].sel=null;matchState[k].matched=0;});
+  tabs.forEach(t=>t.classList.remove('done'));
+  document.querySelectorAll('.qopt').forEach(o=>{
+    o.classList.remove('correct','wrong');
+    o.style.pointerEvents='auto';
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(f=>f.style.display='none');
+  document.querySelectorAll('.match-item').forEach(i=>i.classList.remove('matched','selected','wrong-flash'));
+  document.querySelectorAll('#matchScore1,#matchScore2').forEach(s=>{
+    const t=s.textContent;s.textContent='Score : 0 / '+t.split('/')[1].trim();
+  });
+  matchState.mg1.matched=0;matchState.mg2.matched=0;
+  document.getElementById('finalZone').style.display='none';
+  document.getElementById('showFinalBtn').style.display='flex';
+  updateProgress();
+  showTab(0,tabs[0]);
+}
+
+/* ────────────────────────────────────────────
+   INIT
+──────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded',()=>{
+  initCubeCanvas();
+  drawAxb();
+  drawFact();
+});
+</script>
+
+
+</body><div id="france-verif-popup" style="position: fixed !important; top: 2px !important; right: 0px !important; z-index: 2147483647 !important; pointer-events: none; width: auto; display: block !important;"><div></div></div></html>
